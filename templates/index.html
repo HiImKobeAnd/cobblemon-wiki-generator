@@ -5,9 +5,14 @@
 {% block content %}
     <h1>Welcome to homepage :D</h1> 
     
-    {% for number in (0..name.len()) %}
-    <a href="/pokemon/{{generation[number]}}/{{name[number]}}">
-        {{name[number]}}
-    </a>
+    {% for (val, generation) in generation.iter().enumerate() %}
+        <div>
+            <h2>Generation {{ val + 1 }}</h2>
+            {% for number in (0..generation.pokemon_name.len()) %}
+            <a href="/pokemon/{{ generation.pokemon_generation[number] }}/{{ generation.pokemon_name[number] }}">
+                {{ generation.pokemon_name[number] }}
+            </a>
+            {% endfor %}
+        </div>
     {% endfor %}
 {% endblock %}

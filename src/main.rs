@@ -1,12 +1,12 @@
 mod pokemon;
 mod pokemon_routes;
 
-use std::string;
+use std::{fs::DirEntry, io, path::PathBuf, vec};
 
 use askama::Template;
 use axum::{extract::Path, response::Html, routing::get, Router};
 use pokemon::Pokemon;
-use pokemon_routes::PokemonRoutes;
+use pokemon_routes::{Generations, PokemonRoutes};
 
 #[tokio::main]
 async fn main() {
@@ -19,37 +19,54 @@ async fn main() {
 }
 
 async fn index() -> Html<String> {
-    let mut pokemon_routes: PokemonRoutes = PokemonRoutes {
-        name: vec![],
-        generation: vec![],
-    };
+    let mut generations: Generations = Generations { generation: vec![] };
+    // generations.generation.push();
 
     if let Ok(mut current_generation_dir) = std::env::current_dir() {
-        current_generation_dir.push("pokemon-jsons/generation1");
+        current_generation_dir.push("pokemon-jsons");
+        let generations_dir = std::fs::read_dir(current_generation_dir).unwrap();
+        let mut generations_path = generations_dir
+            .map(|res| res.map(|e| e.path()))
+            .collect::<Result<Vec<_>, io::Error>>()
+            .unwrap();
+        generations_path.sort();
 
-        if let Ok(pokemon_entries) = std::fs::read_dir(&current_generation_dir) {
-            for pokemon_entry in pokemon_entries {
-                if let Ok(pokemon_entry) = pokemon_entry {
-                    let generation = String::from("generation1");
-                    let pokemon_name = pokemon_entry
-                        .file_name()
-                        .into_string()
-                        .expect("Cant convert to String");
-
-                    pokemon_routes
-                        .name
-                        .push(pokemon_name.trim_end_matches(".json").to_string());
-                    pokemon_routes.generation.push(generation);
-                }
-            }
-        } else {
-            println!("Error reading directory!");
+        for generation in generations_path {
+            generations
+                .generation
+                .push(create_generation(generation).await);
         }
-    } else {
-        println!("Error getting current directory!");
     }
 
-    Html(pokemon_routes.render().unwrap())
+    Html(generations.render().unwrap())
+}
+
+async fn create_generation(generation_dir: PathBuf) -> PokemonRoutes {
+    let mut pokemon_routes: PokemonRoutes = PokemonRoutes {
+        pokemon_name: vec![],
+        pokemon_generation: vec![],
+    };
+
+    if let Ok(pokemon_entries) = std::fs::read_dir(generation_dir) {
+        for pokemon_entry in pokemon_entries {
+            if let Ok(pokemon_entry) = pokemon_entry {
+                let generation = String::from("generation1");
+                let pokemon_name = pokemon_entry
+                    .file_name()
+                    .into_string()
+                    .expect("Cant convert to String");
+
+                pokemon_routes
+                    .pokemon_name
+                    .push(pokemon_name.trim_end_matches(".json").to_string());
+                pokemon_routes.pokemon_generation.push(generation);
+            }
+        }
+    } else {
+        println!("Error reading directory!");
+    }
+
+    pokemon_routes
 }
 
 async fn get_pokemon(Path((generation, pokemon_name)): Path<(String, String)>) -> Html<String> {
