@@ -47,20 +47,31 @@ async fn create_generation(generation_dir: PathBuf) -> PokemonRoutes {
         pokemon_generation: vec![],
     };
 
-    if let Ok(pokemon_entries) = std::fs::read_dir(generation_dir) {
-        for pokemon_entry in pokemon_entries {
-            if let Ok(pokemon_entry) = pokemon_entry {
-                let generation = String::from("generation1");
-                let pokemon_name = pokemon_entry
-                    .file_name()
-                    .into_string()
-                    .expect("Cant convert to String");
+    if let Ok(pokemon_dir) = std::fs::read_dir(&generation_dir) {
+        let mut pokemon_path = pokemon_dir
+            .map(|res| res.map(|e| e.path()))
+            .collect::<Result<Vec<_>, io::Error>>()
+            .unwrap();
+        pokemon_path.sort();
 
-                pokemon_routes
-                    .pokemon_name
-                    .push(pokemon_name.trim_end_matches(".json").to_string());
-                pokemon_routes.pokemon_generation.push(generation);
-            }
+        for pokemon_entry in pokemon_path {
+            let generation = generation_dir
+                .file_name()
+                .unwrap()
+                .to_str()
+                .expect("Can't convert to String");
+            let pokemon_name = pokemon_entry
+                .file_name()
+                .unwrap()
+                .to_str()
+                .expect("Can't convert to String");
+
+            pokemon_routes
+                .pokemon_name
+                .push(pokemon_name.trim_end_matches(".json").to_string());
+            pokemon_routes
+                .pokemon_generation
+                .push(generation.to_string());
         }
     } else {
         println!("Error reading directory!");
