@@ -1,0 +1,13 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{name}}{% endblock %}
+
+{% block content %}
+<h1>{{ name }} is a {{primary_type}} pokemon which {% match shoulder_mountable %}
+        {% when Some with (val) %}
+                is maybe shoulder mountable
+        {% when None %}
+            is not shoulder mountable
+        {% endmatch %}</h1>   
+{% endblock %}
