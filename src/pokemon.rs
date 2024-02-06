@@ -176,7 +176,7 @@ pub struct Evolution {
 #[derive(Deserialize, Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Requirement {
-    variant: String,
-    min_level: Option<u32>,
-    target: Option<String>,
+    pub variant: String,
+    pub min_level: Option<u32>,
+    pub target: Option<String>,
 }
