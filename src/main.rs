@@ -1,7 +1,7 @@
 mod pokemon;
 mod pokemon_routes;
 
-use std::{fs::DirEntry, io, path::PathBuf, vec};
+use std::{io, path::PathBuf, vec};
 
 use askama::Template;
 use axum::{extract::Path, response::Html, routing::get, Router};
