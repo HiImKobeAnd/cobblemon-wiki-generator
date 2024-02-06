@@ -20,8 +20,6 @@ async fn main() {
 
 async fn index() -> Html<String> {
     let mut generations: Generations = Generations { generation: vec![] };
-    // generations.generation.push();
-
     if let Ok(mut current_generation_dir) = std::env::current_dir() {
         current_generation_dir.push("pokemon-jsons");
         let generations_dir = std::fs::read_dir(current_generation_dir).unwrap();
