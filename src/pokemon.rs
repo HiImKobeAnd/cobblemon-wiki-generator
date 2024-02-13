@@ -177,6 +177,8 @@ pub struct Evolution {
 #[serde(rename_all = "camelCase")]
 pub struct Requirement {
     pub variant: String,
+    pub amount: Option<u32>,
+    pub range: Option<String>,
     pub min_level: Option<u32>,
     pub target: Option<String>,
 }
