@@ -23,3 +23,7 @@ A person wants to know which moves it Sylveon can learn and which it gains by le
 ## What Could Have Been Done Different?
 
 Make commits at the start of the project and then after each feature.
+
+# Requirements
+Download Cobblemon species folder and add it to the root of the project as <code>pokemon-jsons</code>.
+Cobblemon jsons found at: https://gitlab.com/cable-mc/cobblemon/-/tree/main/common/src/main/resources/data/cobblemon/species
