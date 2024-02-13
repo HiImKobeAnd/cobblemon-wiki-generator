@@ -1,13 +1,288 @@
+{% extends "base.html" %} {% block title %}{{name}}{% endblock %} {% block
+content %}
+<h1>
+  {{ name }} | Pokedex number: {{national_pokedex_number}} | Primary type: {{primary_type}}
+</h1>
 
-{% extends "base.html" %}
+<h2>implemented?</h2>
+        {% match implemented %}
+                {% when Some with (val) %}
+                        {% if val == true|as_ref %}
+                                <p>is implemented</p>
+                        {% else %}
+                                <p>is not implemented</p>
+                        {% endif %} {% when None %}
+                                <p>is not implemented</p>
+        {% endmatch %}
 
-{% block title %}{{name}}{% endblock %}
+<h2>secondary type</h2>
+        {% match secondary_type %}
+                {% when Some with (val) %}
+                        <p>{{ val }}</p>
+                {% when None %}
+                        <p>doesn't have a secondary type</p>
+        {% endmatch %}
 
-{% block content %}
-<h1>{{ name }} is a {{primary_type}} pokemon which {% match shoulder_mountable %}
+<h2>abilities</h2>
+        {% for ability in abilities %}
+                <ul>
+                        <li>{{ ability }}</li>
+                </ul>
+        {% endfor %}
+
+<h2>basestats</h2>
+        <p>hp: {{base_stats.hp}}</p>
+        <p>attack: {{base_stats.attack}}</p>
+        <p>defence: {{base_stats.defence}}</p>
+        <p>special attack: {{base_stats.special_attack}}</p>
+        <p>special defence: {{base_stats.special_defence}}</p>
+        <p>speed: {{base_stats.speed}}</p>
+
+<h2>catch rate</h2>
+        {{ catch_rate }}
+
+<h2>male ratio</h2>
+        {{ male_ratio }}
+
+<h2>shoulder mountable?</h2>
+{% match shoulder_mountable %}
         {% when Some with (val) %}
-                is maybe shoulder mountable
+                {% if val == true|as_ref %}
+                        <p>is shoulder mountable</p>
+                {% else %}
+                        <p>is not shoulder mountable</p>
+                {% endif %}
         {% when None %}
-            is not shoulder mountable
-        {% endmatch %}</h1>   
+                <p>is not shoulder mountable</p>
+{% endmatch %}
+
+<h2>forms</h2>
+        {% match forms %}
+                {% when Some with (val) %}
+                        {% for form in val %}
+                                <ul>
+                                        <li>{{ form.name }}</li>
+                                </ul>
+                        {% endfor %}
+                {% when None %}
+                        <p>doesn't have a form</p>
+        {% endmatch %}
+
+<h2>behaviour</h2>
+        {% match behaviour %}
+                {% when Some with (val) %}
+                        {% match val.resting %}
+                                {% when Some with (val) %}
+                                        <ul>
+                                                <li>
+                                                        <p>can sleep: {{ val.can_sleep}}</p>
+                                                        {% match val.will_sleep_on_bed %}
+                                                                {% when Some with (val) %}
+                                                                        <ul>
+                                                                                <li>
+                                                                                        <p>will sleep on bed: {{ val }}</p>
+                                                                                </li>
+                                                                        </ul>
+                                                                {% when None %}
+                                                                        <p>doesn't sleep on bed</p>
+                                                        {% endmatch %}
+                                                        {% match val.depth %}
+                                                                {% when Some with (val) %}
+                                                                        <ul>
+                                                                                <li>
+                                                                                        <p>depth: {{ val }}</p>
+                                                                                </li>
+                                                                        </ul>
+                                                                {% when None %}
+                                                                        <p>doesn't have depth requirements</p>
+                                                        {% endmatch %}
+                                                </li>
+                                        </ul>
+                                {% when None %}
+                                        <p>doesn't have resting behaviour</p>
+                        {% endmatch %}
+                        {% match val.moving %}
+                                {% when Some with (val) %}
+                                        <ul>
+                                                <li>
+                                                        !TODO
+                                                </li>
+                                        </ul>
+                                {% when None %}
+                                        <p>doesn't have moving behaviour</p>
+                        {% endmatch %}
+                {% when None %}
+                        <p>doesn't have behaviour</p>
+        {% endmatch %}
+
+<h2>base experience yield</h2>
+        {{ base_experience_yield }}
+
+<h2>experience group</h2>
+        {{ experience_group }}
+
+<h2>egg cycles</h2>
+        {{ egg_cycles }}
+
+<h2>egg groups</h2>
+        {% for egg_group in egg_groups %}
+                <ul>
+                        <li>{{ egg_group }}</li>
+                </ul>
+        {% endfor %}
+
+<h2>drops</h2>
+        {% match drops %}
+                {% when Some with (val) %}
+
+                                <ul>
+                                        <li>
+                                                <p>amount: {{ val.amount}}</p>
+                                                <p> entries: 
+                                                        {% for entry in val.entries %}
+                                                                <ul>
+                                                                        <li>
+                                                                                <p>item: {{ entry.item }}</p>
+                                                                                {% match entry.quantity_range %}
+                                                                                        {% when Some with (val) %}
+                                                                                                <p>quantity range: {{ val }}</p>
+                                                                                        {% when None %}
+                                                                                                <p>doesn't have a quantity range</p>
+                                                                                {% endmatch %}
+                                                                                {% match entry.percentage %}
+                                                                                        {% when Some with (val) %}
+                                                                                                <p>percentage: {{ val }}</p>
+                                                                                        {% when None %}
+                                                                                                <p>doesn't have a percentage</p>
+                                                                                {% endmatch %}
+                                                                        </li>
+                                                                </ul>
+                                                        {% endfor %}
+                                                </p>
+                                        </li>
+                                </ul>
+                {% when None %}
+                        <p>doesn't have drops</p>
+        {% endmatch %}
+
+<h2>moves</h2>
+        {% for move in moves %}
+                <ul>
+                        <li>{{ move }}</li>
+                </ul>
+        {% endfor %}
+        
+<h2>labels</h2>
+        {% for label in labels %}
+                <ul>
+                        <li>{{ label }}</li>
+                </ul>
+        {% endfor %}
+
+<h2>pokedex</h2>
+        {% match pokedex %}
+                {% when Some with (val) %}
+                        {% for pokedex in val %}
+                                <ul>
+                                        <li>{{ pokedex }}</li>
+                                </ul>
+                        {% endfor %}
+                {% when None %}
+                        <p>doesn't have a pokedex</p>
+        {% endmatch %}
+
+<h2>pre evolution</h2>
+        {% match pre_evolution %}
+                {% when Some with (val) %}
+                        {{ val }}
+                {% when None %}
+                        <p>doesn't have a pre evolution</p>
+        {% endmatch %}
+
+<h2>evolutions</h2>
+        {% for evolution in evolutions %}
+                <ul>
+                        <li>
+                                <p>id: {{ evolution.id }}</p>
+                                <p>variant: {{ evolution.variant }}</p>
+                                <p>result: {{ evolution.result }}</p>
+                                <p>consume held item: {{ evolution.consume_held_item }}</p>
+                                {% for learnable_move in evolution.learnable_moves %}
+                                        <ul>
+                                                <li></p>{{ learnable_move }}</p></li>
+                                        </ul>
+                                {% endfor %}
+                                {% for requirement in evolution.requirements %}
+                                        <ul>
+                                                <li>
+                                                        <p>variant: {{ requirement.variant }}</p>
+                                                        {% match requirement.target %}
+                                                                {% when Some with (val) %}
+                                                                        <p>min level: {{ val }}</p>
+                                                                {% when None %}
+                                                                        <p>doesn't have a min level</p>
+                                                        {% endmatch %}
+                                                        {% match requirement.min_level %}
+                                                                {% when Some with (val) %}
+                                                                        <p>target: {{ val }}</p>
+                                                                {% when None %}
+                                                                        <p>doesn't have a target</p>
+                                                        {% endmatch %}
+                                                </li>
+                                        </ul>
+                                {% endfor %}
+                                {% match evolution.required_context %}
+                                        {% when Some with (val) %}
+                                                {{ val }}
+                                        {% when None %}
+                                                <p>doesn't have a required context</p>
+                                {% endmatch %}
+                        </li>
+                </ul>
+        {% endfor %}
+
+<h2>base scale</h2>
+        {% match base_scale %}
+                {% when Some with (val) %}
+                        {{ val }}
+                {% when None %}
+                        <p>doesn't have a base scale</p>
+        {% endmatch %}
+
+<h2>hitbox</h2>
+        {% match hitbox %}
+                {% when Some with (val) %}
+                        <p>width: {{ val.width }}</p>
+                        <p>height: {{ val.height }}</p>
+                        <p>fixed: {{ val.fixed }}</p>
+                {% when None %}
+                        <p>doesn't have a base scale</p>
+        {% endmatch %}
+
+<h2>base friendship</h2>
+        {{ base_friendship }}
+
+<h2>ev yield</h2>
+        <p>hp: {{ev_yield.hp}}</p>
+        <p>attack: {{ev_yield.attack}}</p>
+        <p>defence: {{ev_yield.defence}}</p>
+        <p>special attack: {{ev_yield.special_attack}}</p>
+        <p>special defence: {{ev_yield.special_defence}}</p>
+        <p>speed: {{ev_yield.speed}}</p>
+
+<h2>height</h2>
+        {{ height }}
+
+<h2>weight</h2>
+        {{ weight }}
+
+<h2>aspects</h2>
+        {% for aspect in aspects %}
+                <ul>
+                        <li>{{ aspect }}</li>
+                </ul>
+        {% endfor %}
+<h2>cannot dynamax</h2>
+        {{ cannot_dynamax }}
+
 {% endblock %}
